@@ -50,9 +50,9 @@ namespace wally
         /// By default, it will try to find a 1920x1080 image, onless resolution is given
         /// By default, it will download the latest, i.e. the first image, onless specified else
         /// </summary>
-        /// <parama name="resolution">Resolution of image to try and download, default is "1920x1080"</param>
+        /// <parama name="default_resolution">Resolution of image to try and download, default is "1920x1080"</param>
         /// <param name="random">Download random image from found images, or the latest, i.e. first one, default is no</param>
-        public void Download(string resolution = resolution, bool random = false)
+        public void Download(string resolution = default_resolution, bool random = false)
         {
             int index;
             if (random == false)

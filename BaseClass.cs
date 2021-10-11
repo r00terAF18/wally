@@ -66,12 +66,12 @@ namespace wally
                 }
             };
             proc.Start();
-            while(!proc.StandardOutput.EndOfStream)
+            while (!proc.StandardOutput.EndOfStream)
             {
                 string temp = proc.StandardOutput.ReadLine();
                 if (temp.Split(":")[0].Trim() == "DE")
                 {
-                    DE = temp.Split(":")[1].Trim();
+                    DE = temp.Split(":")[1].Trim().ToLower();
                 }
                 if (temp.Split(":")[0].Trim() == "Resolution")
                 {
@@ -118,12 +118,28 @@ namespace wally
 
         public void SetWallpaper(string file_path)
         {
-            XmlDocument doc = new XmlDocument();
-            doc.Load($"/home/{Environment.UserName}/.config/{DE.ToLower()}/xfconf/xfce-perchannel-xml/{DE.ToLower()}-desktop.xml");
-            XmlNode root = doc.DocumentElement;
-            XmlNode last_image = root.SelectSingleNode("backdrop::screen0::monitoreDP-1::workspace0::last-image");
-            last_image.Value = file_path;
-            doc.Save($"/home/{Environment.UserName}/.config/{DE.ToLower()}/xfconf/xfce-perchannel-xml/{DE.ToLower()}-desktop.xml");
+            string arg;
+            if (IsLaptop)
+            {
+                arg = $"-c {DE}-desktop -p /backdrop/screen0/monitoreDP-1/workspace0/last-image -s {file_path}";
+            }
+            else
+            {
+                arg = $"-c {DE}-desktop -p /backdrop/screen0/monitor0/workspace0/last-image -s {file_path}";
+            }
+            // xfconf-query -c xfce4-desktop -p /backdrop/screen0/monitoreDP-1/workspace0/last-image -s /home/amirs/Pictures/Wallpaper/007.jpg
+            Process proc = new Process
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = "xfconf-query",
+                    Arguments = arg,
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    CreateNoWindow = true
+                }
+            };
+            proc.Start();
         }
 
     }
