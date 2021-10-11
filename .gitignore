@@ -445,4 +445,7 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+info.json
+sys.txt
+
 # End of https://www.toptal.com/developers/gitignore/api/dotnetcore,linux,windows,visualstudiocode,csharp
