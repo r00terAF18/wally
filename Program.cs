@@ -1,5 +1,4 @@
-﻿using System.Xml;
-using Spectre.Console;
+﻿using Spectre.Console;
 using wally;
 
 const string logo = @"
@@ -14,8 +13,10 @@ __      ____ _| | |_   _
 Console.Clear();
 AnsiConsole.WriteLine(logo);
 
+// WallpapersWide w = new("Synthwave");
+// w.Download();
+// w.SetWallpaper(w.destFile);
 
-// BaseClass b = new();
-WallpapersWide w = new("Anime");
-w.Download(random: true);
-w.SetWallpaper(w.destFile);
+Unsplash u = new("Synthwave");
+u.Download();
+u.SetWallpaper(u.destFile);

@@ -64,7 +64,8 @@ namespace wally
                     AnsiConsole.MarkupLine($"[green][[+]] Checking Folder and file name...[/]");
                     string fileName = link.Split("/")[4];
                     destFile = GetDestFile(fileName);
-                    DownloadWallpaper(link);
+                    // DownloadWallpaper(link);
+                    base.Download(link);
                 }
             }
         }

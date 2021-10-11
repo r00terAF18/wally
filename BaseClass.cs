@@ -149,11 +149,11 @@ namespace wally
         public HtmlDocument GetDownloadHtmlDocument()
         {
             web = new HtmlWeb();
-            htmlDoc = web.Load(GetLink());
+            htmlDoc = web.Load(GetLinkForDownload());
             return htmlDoc;
         }
 
-        public string GetLink()
+        private string GetLinkForDownload()
         {
             int index;
             if (random == false)
@@ -169,7 +169,7 @@ namespace wally
             return wallpaper_list[index];
         }
 
-        public void DownloadWallpaper(string URL)
+        protected virtual void Download(string URL)
         {
             AnsiConsole.MarkupLine($"[yellow]>>> Downloading {file_name} <<<[/]");
             using (WebClient w = new())
