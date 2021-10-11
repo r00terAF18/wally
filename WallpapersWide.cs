@@ -1,13 +1,11 @@
 using HtmlAgilityPack;
 using Spectre.Console;
-using System.Net;
 
 namespace wally
 {
     /// <summary>
-    /// Helper Class to scrape and download wallpapers form WallpapersWide.com
+    /// Inherits from BaseClass, hanldes wallpaperswide.com
     /// </summary>
-    /// <param name="search_term">Search Query, for example: Synthwave</param>
     public class WallpapersWide : BaseClass
     {
         private const string _baseUrl = "http://wallpaperswide.com";
@@ -16,6 +14,7 @@ namespace wally
         public WallpapersWide(string search_term)
         {
             string searchUrl = _basUrlSearch + search_term;
+            folder_name = "WallpapersWide";
             GetLinks(searchUrl);
         }
 
@@ -46,28 +45,15 @@ namespace wally
             }
         }
 
+
         /// <summary>
-        /// By default, it will try to find a 1920x1080 image, onless resolution is given
-        /// By default, it will download the latest, i.e. the first image, onless specified else
+        /// 
         /// </summary>
-        /// <parama name="default_resolution">Resolution of image to try and download, default is "1920x1080"</param>
-        /// <param name="random">Download random image from found images, or the latest, i.e. first one, default is no</param>
+        /// <param name="resolution"></param>
+        /// <param name="random"></param>
         public void Download(string resolution = default_resolution, bool random = false)
         {
-            int index;
-            if (random == false)
-            {
-                index = 0;
-            }
-            else
-            {
-                Random r = new();
-                index = r.Next(0, wallpaper_list.Count - 1);
-                AnsiConsole.MarkupLine($"[green][[+]] Selecting random Wallpaper...[/]");
-            }
-
-            web = new HtmlWeb();
-            htmlDoc = web.Load(wallpaper_list[index]);
+            htmlDoc = GetDownloadHtmlDocument();
             nodes = htmlDoc.DocumentNode.SelectNodes("//*[@id=\"wallpaper-resolutions\"]/a");
 
             foreach (var item in nodes)
@@ -75,24 +61,12 @@ namespace wally
                 if (item.InnerText == resolution)
                 {
                     string link = _baseUrl + item.Attributes["href"].Value;
-                    _downlaod(link);
+                    AnsiConsole.MarkupLine($"[green][[+]] Checking Folder and file name...[/]");
+                    string fileName = link.Split("/")[4];
+                    destFile = GetDestFile(fileName);
+                    DownloadWallpaper(link);
                 }
             }
-        }
-
-        private void _downlaod(string URL)
-        {
-            AnsiConsole.MarkupLine($"[green][[+]] Checking Folder and file name...[/]");
-            string fileName = URL.Split("/")[4];
-            string destFile = GetDestFile(fileName, "WallpapersWide");
-
-            AnsiConsole.MarkupLine($"[yellow]>>> Downloading {fileName} <<<[/]");
-            using (WebClient w = new())
-            {
-                Uri u = new Uri(URL);
-                w.DownloadFile(u, destFile);
-            }
-            AnsiConsole.MarkupLine($"[green]>>> Downloaded {fileName} <<<[/]");
         }
     }
 }

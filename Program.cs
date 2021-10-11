@@ -16,7 +16,6 @@ AnsiConsole.WriteLine(logo);
 
 
 // BaseClass b = new();
-
-WallpapersWide w = new("Car");
-w.Download(random: true, resolution: "2560x1440");
+WallpapersWide w = new("Anime");
+w.Download(random: true);
 w.SetWallpaper(w.destFile);

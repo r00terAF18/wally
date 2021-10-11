@@ -2,23 +2,27 @@ using Newtonsoft.Json.Linq;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using HtmlAgilityPack;
-using System.Xml;
+using Spectre.Console;
+using System.Net;
 
 namespace wally
 {
     public class BaseClass
     {
-        public HtmlWeb web;
-        public HtmlDocument htmlDoc;
-        public HtmlNodeCollection nodes;
+        public HtmlWeb web { get; set; }
+        public HtmlDocument htmlDoc { get; set; }
+        public HtmlNodeCollection nodes { get; set; }
         public static bool OSisWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
         public string path { get; set; }
+        public string folder_name { get; set; }
         public string destFile { get; set; }
+        public string file_name { get; set; }
         public List<string> wallpaper_list = new List<string> { };
         public const string default_resolution = "1920x1080";
-        public string resolution;
-        public string DE;
-        public bool IsLaptop;
+        public string resolution { get; set; }
+        public string DE { get; set; }
+        public bool IsLaptop { get; set; }
+        public bool random { get; set; }
 
         public BaseClass()
         {
@@ -78,7 +82,6 @@ namespace wally
                     resolution = temp.Split(":")[1].Trim();
                 }
             }
-            Console.WriteLine("Got Sys Info");
         }
 
         public List<string> Links()
@@ -86,7 +89,7 @@ namespace wally
             return wallpaper_list;
         }
 
-        public string GetPath(string folder_name)
+        private string SetPath()
         {
             if (OSisWindows)
             {
@@ -105,9 +108,10 @@ namespace wally
             return path;
         }
 
-        public string GetDestFile(string fileName, string folder_name)
+        public string GetDestFile(string fileName)
         {
-            path = GetPath(folder_name);
+            SetPath();
+            file_name = fileName;
             if (OSisWindows)
                 destFile = path + $"\\{fileName}";
             else
@@ -140,6 +144,40 @@ namespace wally
                 }
             };
             proc.Start();
+        }
+
+        public HtmlDocument GetDownloadHtmlDocument()
+        {
+            web = new HtmlWeb();
+            htmlDoc = web.Load(GetLink());
+            return htmlDoc;
+        }
+
+        public string GetLink()
+        {
+            int index;
+            if (random == false)
+            {
+                index = 0;
+            }
+            else
+            {
+                Random r = new();
+                index = r.Next(0, wallpaper_list.Count - 1);
+                AnsiConsole.MarkupLine($"[green][[+]] Selecting random Wallpaper...[/]");
+            }
+            return wallpaper_list[index];
+        }
+
+        public void DownloadWallpaper(string URL)
+        {
+            AnsiConsole.MarkupLine($"[yellow]>>> Downloading {file_name} <<<[/]");
+            using (WebClient w = new())
+            {
+                Uri u = new Uri(URL);
+                w.DownloadFile(u, destFile);
+            }
+            AnsiConsole.MarkupLine($"[green]>>> Downloaded {file_name} <<<[/]");
         }
 
     }
