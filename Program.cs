@@ -13,10 +13,10 @@ __      ____ _| | |_   _
 Console.Clear();
 AnsiConsole.WriteLine(logo);
 
-// WallpapersWide w = new("Synthwave");
-// w.Download();
+WallpapersWide w = new("Car");
+w.Download(custom_resolution: new List<string>{"1920x1080", "2560x1440"});
 // w.SetWallpaper(w.destFile);
 
-Unsplash u = new("Synthwave");
-u.Download();
-u.SetWallpaper(u.destFile);
+// Unsplash u = new("Anime");
+// u.Download();
+// u.SetWallpaper(u.destFile);

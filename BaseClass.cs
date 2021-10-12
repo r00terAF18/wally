@@ -4,6 +4,8 @@ using System.Runtime.InteropServices;
 using HtmlAgilityPack;
 using Spectre.Console;
 using System.Net;
+using Flurl;
+using Flurl.Http;
 
 namespace wally
 {
@@ -18,11 +20,10 @@ namespace wally
         public string destFile { get; set; }
         public string file_name { get; set; }
         public List<string> wallpaper_list = new List<string> { };
-        public const string default_resolution = "1920x1080";
         public string resolution { get; set; }
         public string DE { get; set; }
         public bool IsLaptop { get; set; }
-        public bool random { get; set; }
+        public bool random_download { get; set; }
 
         public BaseClass()
         {
@@ -156,7 +157,7 @@ namespace wally
         private string GetLinkForDownload()
         {
             int index;
-            if (random == false)
+            if (random_download == false)
             {
                 index = 0;
             }

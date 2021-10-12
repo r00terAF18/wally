@@ -51,8 +51,10 @@ namespace wally
         /// </summary>
         /// <param name="resolution"></param>
         /// <param name="random"></param>
-        public void Download(string resolution = default_resolution, bool random = false)
+        public void Download(string custom_resolution = "1920x1080", bool random = false)
         {
+            random_download = random;
+            resolution = custom_resolution;
             htmlDoc = GetDownloadHtmlDocument();
             nodes = htmlDoc.DocumentNode.SelectNodes("//*[@id=\"wallpaper-resolutions\"]/a");
 
@@ -66,6 +68,29 @@ namespace wally
                     destFile = GetDestFile(fileName);
                     // DownloadWallpaper(link);
                     base.Download(link);
+                }
+            }
+        }
+
+        public void Download(List<string> custom_resolution, bool random = false)
+        {
+            random_download = random;
+            htmlDoc = GetDownloadHtmlDocument();
+            nodes = htmlDoc.DocumentNode.SelectNodes("//*[@id=\"wallpaper-resolutions\"]/a");
+
+            foreach (var item in nodes)
+            {
+                foreach (var res in custom_resolution)
+                {
+                    if (item.InnerText == res)
+                    {
+                        string link = _baseUrl + item.Attributes["href"].Value;
+                        AnsiConsole.MarkupLine($"[green][[+]] Checking Folder and file name...[/]");
+                        string fileName = link.Split("/")[4];
+                        destFile = GetDestFile(fileName);
+                        // DownloadWallpaper(link);
+                        base.Download(link);
+                    }
                 }
             }
         }
