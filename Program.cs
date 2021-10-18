@@ -13,5 +13,5 @@ __      ____ _| | |_   _
 Console.Clear();
 AnsiConsole.WriteLine(logo);
 
-HdWallpaper hd = new("Synthwave");
-hd.Download(random: true, custom_resolution: new List<string> { "1280x720", "1920x1080"});
+HdWallpaper h = new("Anime");
+h.MultiDownload();
