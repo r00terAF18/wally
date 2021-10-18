@@ -1,18 +1,13 @@
-using HtmlAgilityPack;
 using Spectre.Console;
 
 namespace wally
 {
-    /// <summary>
-    /// Inherits from BaseClass, hanldes wallpaperswide.com
-    /// </summary>
     public class WallpapersWide : BaseClass
     {
         public WallpapersWide(string query)
         {
             base.baseURL = "http://wallpaperswide.com";
             base.searchBaseURL = "http://wallpaperswide.com/search.html?q=";
-            base.searchTerm = query;
             base.searchURL = base.searchBaseURL + query;
             folder_name = "WallpapersWide";
             try
@@ -55,7 +50,7 @@ namespace wally
 
             foreach (var item in nodes)
             {
-                foreach (var res in base.multi_resolution)
+                foreach (var res in multi_resolution)
                 {
                     if (item.InnerText == res)
                     {
