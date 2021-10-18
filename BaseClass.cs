@@ -14,7 +14,6 @@ namespace wally
         public HtmlWeb web { get; set; }
         public HtmlDocument htmlDoc { get; set; }
         public HtmlNodeCollection nodes { get; set; }
-        public static bool OSisWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
         public string path { get; set; }
         public string folder_name { get; set; }
         public string destFile { get; set; }
@@ -92,15 +91,7 @@ namespace wally
 
         private string SetPath()
         {
-            if (OSisWindows)
-            {
-                path = $"C:\\Users\\{Environment.UserName}\\Pictures\\Wallpapers\\{folder_name}";
-            }
-            else
-            {
-                path = $"/home/{Environment.UserName}/Pictures/Wallpaper/{folder_name}";
-            }
-
+            path = $"~/Pictures/Wallpaper/{folder_name}";
             if (!Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);
@@ -113,11 +104,7 @@ namespace wally
         {
             SetPath();
             file_name = fileName;
-            if (OSisWindows)
-                destFile = path + $"\\{fileName}";
-            else
-                destFile = path + $"/{fileName}";
-
+            destFile = path + $"/{fileName}";
             return destFile;
         }
 
