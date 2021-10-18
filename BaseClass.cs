@@ -1,11 +1,8 @@
 using Newtonsoft.Json.Linq;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
 using HtmlAgilityPack;
 using Spectre.Console;
 using System.Net;
-using Flurl;
-using Flurl.Http;
 
 namespace wally
 {
@@ -20,9 +17,14 @@ namespace wally
         public string file_name { get; set; }
         public List<string> wallpaper_list = new List<string> { };
         public string resolution { get; set; }
+        public List<string> multi_resolution { get; set; }
         public string DE { get; set; }
         public bool IsLaptop { get; set; }
         public bool random_download { get; set; }
+        public string searchTerm { get; set; }
+        public string baseURL { get; set; }
+        public string searchBaseURL { get; set; }
+        public string searchURL { get; set; }
 
         public BaseClass()
         {
@@ -84,20 +86,77 @@ namespace wally
             }
         }
 
-        public List<string> Links()
+        protected void GetLinks(string xpath)
         {
-            return wallpaper_list;
+            AnsiConsole.MarkupLine($"[green][[+]] Loading Content...[/]");
+            web = new HtmlWeb();
+            htmlDoc = web.Load(searchURL);
+            AnsiConsole.MarkupLine($"[green][[+]] Scraping Data...[/]");
+            nodes = htmlDoc.DocumentNode.SelectNodes(xpath);
+            if (nodes.Count != 0)
+            {
+                AnsiConsole.MarkupLine($"[green][[+]] Storing link temporarely...[/]");
+                foreach (var item in nodes)
+                {
+                    string link = $"{baseURL}{item.Attributes["href"].Value}";
+                    wallpaper_list.Add(link);
+                }
+            }
+            else
+                Console.WriteLine("No Wallpapers could be found, maybe try searching for something else");
         }
 
-        private string SetPath()
+        public HtmlNodeCollection SingleResolution(string xpath)
+        {
+            htmlDoc = GetDownloadPage();
+            nodes = htmlDoc.DocumentNode.SelectNodes(xpath);
+            List<string> temp = new List<string> { };
+            foreach (HtmlNode item in nodes)
+            {
+                temp.Add(item.InnerText.Trim().Replace(" ", ""));
+            }
+            resolution = AnsiConsole.Prompt(
+                new SelectionPrompt<string>()
+                    .Title("Which Resolution do you want?")
+                    .PageSize(10)
+                    .MoreChoicesText("[grey](Move up and down to reveal more Resolutions)[/]")
+                    .AddChoices(temp.ToArray()));
+            return nodes;
+        }
+
+        public HtmlNodeCollection MultiResolution(string xpath)
+        {
+            htmlDoc = GetDownloadPage();
+            nodes = htmlDoc.DocumentNode.SelectNodes(xpath);
+            List<string> temp = new List<string> { };
+            foreach (HtmlNode item in nodes)
+            {
+                temp.Add(item.InnerText.Trim().Replace(" ", ""));
+            }
+
+            List<string> selected_resoltions = AnsiConsole.Prompt(
+                new MultiSelectionPrompt<string>()
+                .Title("How many Resolutions do you want?")
+                .PageSize(10)
+                .MoreChoicesText("[grey](Move up and down to reveal more Resoltions)[/]")
+                .InstructionsText(
+                    "[grey](Press [blue]<space>[/] to toggle a Resolution, " +
+                    "[green]<enter>[/] to accept)[/]")
+                .AddChoices(temp.ToArray())
+            );
+
+            multi_resolution = selected_resoltions;
+
+            return nodes;
+        }
+
+        private void SetPath()
         {
             path = $"/home/{Environment.UserName}/Pictures/Wallpaper/{folder_name}";
             if (!Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);
             }
-
-            return path;
         }
 
         public string GetDestFile(string fileName)
@@ -134,14 +193,7 @@ namespace wally
             proc.Start();
         }
 
-        public HtmlDocument GetDownloadHtmlDocument()
-        {
-            web = new HtmlWeb();
-            htmlDoc = web.Load(GetLinkForDownload());
-            return htmlDoc;
-        }
-
-        private string GetLinkForDownload()
+        public HtmlDocument GetDownloadPage()
         {
             int index;
             if (random_download == false)
@@ -154,7 +206,9 @@ namespace wally
                 index = r.Next(0, wallpaper_list.Count - 1);
                 AnsiConsole.MarkupLine($"[green][[+]] Selecting random Wallpaper...[/]");
             }
-            return wallpaper_list[index];
+            web = new HtmlWeb();
+            htmlDoc = web.Load(wallpaper_list[index]);
+            return htmlDoc;
         }
 
         protected virtual void Download(string URL)
