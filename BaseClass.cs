@@ -106,7 +106,7 @@ namespace wally
                 Console.WriteLine("No Wallpapers could be found, maybe try searching for something else");
         }
 
-        public HtmlNodeCollection SingleResolution(string xpath)
+        protected HtmlNodeCollection SingleResolution(string xpath)
         {
             htmlDoc = GetDownloadPage();
             nodes = htmlDoc.DocumentNode.SelectNodes(xpath);
@@ -124,7 +124,7 @@ namespace wally
             return nodes;
         }
 
-        public HtmlNodeCollection MultiResolution(string xpath)
+        protected HtmlNodeCollection MultiResolution(string xpath)
         {
             htmlDoc = GetDownloadPage();
             nodes = htmlDoc.DocumentNode.SelectNodes(xpath);
