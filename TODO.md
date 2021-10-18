@@ -8,6 +8,7 @@
 - [ ] More Resolutions
     - [ ] show a lit to select from
 - [ ] More DE support
+    - [ ] Cutefish
     - [x] XFCE
     - [ ] KDE
     - [ ] Gnome

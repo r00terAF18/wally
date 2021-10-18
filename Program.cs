@@ -13,10 +13,5 @@ __      ____ _| | |_   _
 Console.Clear();
 AnsiConsole.WriteLine(logo);
 
-WallpapersWide w = new("Car");
-w.Download(custom_resolution: new List<string>{"1920x1080", "2560x1440"});
-// w.SetWallpaper(w.destFile);
-
-// Unsplash u = new("Anime");
-// u.Download();
-// u.SetWallpaper(u.destFile);
+HdWallpaper hd = new("Synthwave");
+hd.Download(random: true, custom_resolution: new List<string> { "1280x720", "1920x1080"});

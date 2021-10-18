@@ -26,6 +26,7 @@ namespace wally
             try
             {
                 AnsiConsole.MarkupLine($"[green][[+]] Scraping Data...[/]");
+                // //*[@id="content"]/ul/li[1]/div/div[4]/a
                 nodes = htmlDoc.DocumentNode.SelectNodes("//*[@id=\"hudtitle\"]/a");
                 if (nodes.Count != 0)
                 {

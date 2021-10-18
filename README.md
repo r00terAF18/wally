@@ -24,12 +24,14 @@ The BaseClass is the heart of it all, it handles Folder, Files and downloading t
 
 - [ ] Add support for more websites
     - [x] WallpapersWide
+    - [x] HdWallpapers
     - [ ] Unsplash
     - [ ] and more
 - [x] Auto set latest downloaded Wallpaper
 - [ ] More Resolutions
     - [ ] show a lit to select from
 - [ ] More DE support
+    - [ ] Cutefish
     - [x] XFCE
     - [ ] KDE
     - [ ] Gnome

@@ -3,14 +3,14 @@ using Spectre.Console;
 
 namespace wally
 {
-    public class Unsplash : BaseClass
+    public class HdWallpaper : BaseClass
     {
-        private const string _baseUrl = "https://unsplash.com/";
-        private const string _basUrlSearch = "https://unsplash.com/s/photos/";
-        public Unsplash(string search_term)
+        private const string _baseUrl = "https://www.hdwallpapers.in";
+        private const string _basUrlSearch = "https://www.hdwallpapers.in/search.html?q=";
+        public HdWallpaper(string search_term)
         {
             string searchUrl = _basUrlSearch + search_term;
-            folder_name = "Unsplash";
+            folder_name = "HdWallpapers";
             GetLinks(searchUrl);
         }
 
@@ -22,13 +22,12 @@ namespace wally
             try
             {
                 AnsiConsole.MarkupLine($"[green][[+]] Scraping Data...[/]");
-                nodes = htmlDoc.DocumentNode.SelectNodes("//*[@id=\"app\"]/div/div[2]/div[3]/div[4]/div/div/div/div[2]/figure[1]/div/div[1]/div/div/a/div/div[2]/div/img");
+                nodes = htmlDoc.DocumentNode.SelectNodes("//*[@id=\"content\"]/div[3]/ul/li/div/a");
                 if (nodes.Count != 0)
                 {
                     AnsiConsole.MarkupLine($"[green][[+]] Storing link temporarely...[/]");
                     foreach (var item in nodes)
                     {
-                        Console.WriteLine(item);
                         string link = $"{_baseUrl}{item.Attributes["href"].Value}";
                         wallpaper_list.Add(link);
                     }
@@ -47,13 +46,14 @@ namespace wally
             random_download = random;
             resolution = custom_resolution;
             htmlDoc = GetDownloadHtmlDocument();
-            nodes = htmlDoc.DocumentNode.SelectNodes("//*[@id=\"wallpaper-resolutions\"]/a");
+            nodes = htmlDoc.DocumentNode.SelectNodes("//*[@id=\"content\"]/div[3]/article/div[2]/a");
+
 
             foreach (var item in nodes)
             {
-                if (item.InnerText == resolution)
+                if (item.InnerText.Trim().Replace(" ", "") == resolution)
                 {
-                    string link = _baseUrl + item.Attributes["href"].Value;
+                    string link = _baseUrl + "/" + item.Attributes["href"].Value;
                     AnsiConsole.MarkupLine($"[green][[+]] Checking Folder and file name...[/]");
                     // Class Specific Code
                     string fileName = link.Split("/")[4];
@@ -68,15 +68,15 @@ namespace wally
         {
             random_download = random;
             htmlDoc = GetDownloadHtmlDocument();
-            nodes = htmlDoc.DocumentNode.SelectNodes("//*[@id=\"wallpaper-resolutions\"]/a");
+            nodes = htmlDoc.DocumentNode.SelectNodes("//*[@id=\"content\"]/div[3]/article/div[2]/a");
 
             foreach (var item in nodes)
             {
                 foreach (var res in custom_resolution)
                 {
-                    if (item.InnerText == res)
+                    if (item.InnerText.Trim().Replace(" ", "") == res)
                     {
-                        string link = _baseUrl + item.Attributes["href"].Value;
+                        string link = _baseUrl + "/" + item.Attributes["href"].Value;
                         AnsiConsole.MarkupLine($"[green][[+]] Checking Folder and file name...[/]");
                         string fileName = link.Split("/")[4];
                         destFile = GetDestFile(fileName);

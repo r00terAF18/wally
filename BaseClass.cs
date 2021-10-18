@@ -91,7 +91,7 @@ namespace wally
 
         private string SetPath()
         {
-            path = $"~/Pictures/Wallpaper/{folder_name}";
+            path = $"/home/{Environment.UserName}/Pictures/Wallpaper/{folder_name}";
             if (!Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);
