@@ -26,7 +26,7 @@ The BaseClass is the heart of it all, it handles Folder, Files and downloading t
     - [ ] and more
 - [x] Auto set latest downloaded Wallpaper
 - [x] More Resolutions
-    - [x] show a lit to select from
+    - [x] show a list to select from
 - [ ] More DE support
     - [ ] Cutefish
     - [x] XFCE

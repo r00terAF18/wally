@@ -21,7 +21,8 @@ var website = AnsiConsole.Prompt(
         .AddChoices(new[] {
             "WallpapersWide.com",
             "HdWallpapers.in",
-            "[strikethrough]Pexels.com[/]"
+            "[strikethrough]Pexels.com[/]",
+            "[strikethrough]unsplash.com[/]"
         }));
 
 string query = AnsiConsole.Ask<string>("What to search for?");
