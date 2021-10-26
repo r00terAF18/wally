@@ -39,10 +39,22 @@ var random_download = AnsiConsole.Prompt(
         .AllowEmpty());
 bool drandom;
 
+var setWallpaperNow = AnsiConsole.Prompt(
+    new TextPrompt<string>("[grey][[Optional]][/] [green]Set newly downloaded Wallpaper(Y/N)[/]?")
+        .DefaultValue("N")
+        .InvalidChoiceMessage("[red]That's not a valid Choice[/]")
+        .AllowEmpty());
+bool setNow;
+
 if (random_download == "R")
     drandom = true;
 else
     drandom = false;
+
+if (setWallpaperNow == "Y")
+    setNow = true;
+else
+    setNow = false;
 
 switch (website)
 {
@@ -52,6 +64,9 @@ switch (website)
             w.Download(random: drandom);
         else
             w.MultiDownload();
+
+        if (setNow)
+            w.SetWallpaper(w.destFile);
         break;
     case "HdWallpapers.in":
         HdWallpaper h = new(query);
@@ -59,6 +74,9 @@ switch (website)
             h.Download(random: drandom);
         else
             h.MultiDownload();
+
+        if (setNow)
+            h.SetWallpaper(h.destFile);
         break;
     default:
         break;

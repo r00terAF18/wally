@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using Newtonsoft.Json.Linq;
 using System.Diagnostics;
 using HtmlAgilityPack;
@@ -20,6 +21,7 @@ namespace wally
         public List<string> multi_resolution { get; set; }
         public string DE { get; set; }
         public bool IsLaptop { get; set; }
+        public bool IsWindows { get; set; }
         public bool random_download { get; set; }
         public string searchTerm { get; set; }
         public string baseURL { get; set; }
@@ -28,6 +30,7 @@ namespace wally
 
         public BaseClass()
         {
+            IsWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? true : false;
             GetSysInfo();
         }
 
@@ -38,52 +41,60 @@ namespace wally
 
         private void GetSysInfo()
         {
-            Process proc = new Process
+            if (!IsWindows)
             {
-                StartInfo = new ProcessStartInfo
+                Process proc = new Process
                 {
-                    FileName = "hostnamectl",
-                    Arguments = "--json=pretty",
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    CreateNoWindow = true
+                    StartInfo = new ProcessStartInfo
+                    {
+                        FileName = "hostnamectl",
+                        Arguments = "--json=pretty",
+                        UseShellExecute = false,
+                        RedirectStandardOutput = true,
+                        CreateNoWindow = true
+                    }
+                };
+                proc.Start();
+                string cmd_output = proc.StandardOutput.ReadToEnd();
+                JObject jobj = JObject.Parse(cmd_output);
+                if (jobj["Chassis"].Value<string>() == "laptop")
+                {
+                    IsLaptop = true;
                 }
-            };
-            proc.Start();
-            string cmd_output = proc.StandardOutput.ReadToEnd();
-            JObject jobj = JObject.Parse(cmd_output);
-            if (jobj["Chassis"].Value<string>() == "laptop")
-            {
-                IsLaptop = true;
+                else
+                {
+                    IsLaptop = false;
+                }
+                proc = new Process
+                {
+                    StartInfo = new ProcessStartInfo
+                    {
+                        FileName = "screenfetch",
+                        Arguments = "-Nn",
+                        UseShellExecute = false,
+                        RedirectStandardOutput = true,
+                        CreateNoWindow = true
+                    }
+                };
+                proc.Start();
+                while (!proc.StandardOutput.EndOfStream)
+                {
+                    string temp = proc.StandardOutput.ReadLine();
+                    if (temp.Split(":")[0].Trim() == "DE")
+                    {
+                        DE = temp.Split(":")[1].Trim().ToLower();
+                    }
+                    if (temp.Split(":")[0].Trim() == "Resolution")
+                    {
+                        resolution = temp.Split(":")[1].Trim();
+                    }
+                }
             }
             else
             {
-                IsLaptop = false;
+                DE = "Windows WM";
             }
-            proc = new Process
-            {
-                StartInfo = new ProcessStartInfo
-                {
-                    FileName = "screenfetch",
-                    Arguments = "-Nn",
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    CreateNoWindow = true
-                }
-            };
-            proc.Start();
-            while (!proc.StandardOutput.EndOfStream)
-            {
-                string temp = proc.StandardOutput.ReadLine();
-                if (temp.Split(":")[0].Trim() == "DE")
-                {
-                    DE = temp.Split(":")[1].Trim().ToLower();
-                }
-                if (temp.Split(":")[0].Trim() == "Resolution")
-                {
-                    resolution = temp.Split(":")[1].Trim();
-                }
-            }
+
         }
 
         protected void GetLinks(string xpath)
@@ -152,7 +163,10 @@ namespace wally
 
         private void SetPath()
         {
-            path = $"/home/{Environment.UserName}/Pictures/Wallpaper/{folder_name}";
+            if (!IsWindows)
+                path = $"/home/{Environment.UserName}/Pictures/Wallpaper/{folder_name}";
+            else
+                path = @$"C:\Users\{Environment.UserName}\Pictures\Wallpaper\{folder_name}";
             if (!Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);
@@ -163,27 +177,44 @@ namespace wally
         {
             SetPath();
             file_name = fileName;
-            destFile = path + $"/{fileName}";
+            if (!IsWindows)
+                destFile = path + $"/{fileName}";
+            else
+                destFile = path + @$"\{fileName}";
             return destFile;
         }
 
         public void SetWallpaper(string file_path)
         {
-            string arg;
-            if (IsLaptop)
+            string arg = "";
+            string cmd = "";
+            switch (DE)
             {
-                arg = $"-c {DE}-desktop -p /backdrop/screen0/monitoreDP-1/workspace0/last-image -s {file_path}";
+                case "xfce4":
+                    cmd = "xfconf-query";
+                    if (IsLaptop)
+                    {
+                        arg = $"-c {DE}-desktop -p /backdrop/screen0/monitoreDP-1/workspace0/last-image -s {file_path}";
+                    }
+                    else
+                    {
+                        arg = $"-c {DE}-desktop -p /backdrop/screen0/monitor0/workspace0/last-image -s {file_path}";
+                    }
+                    break;
+                case "Windows WM":
+                    cmd = "reg add";
+                    arg = $"\"HKEY_CURRENT_USER\\Control Panel\\Desktop\" /v Wallpaper /t REG_SZ /d {file_path} /f";
+                    break;
+                default:
+                    throw new Exception("No valid DE was found");
             }
-            else
-            {
-                arg = $"-c {DE}-desktop -p /backdrop/screen0/monitor0/workspace0/last-image -s {file_path}";
-            }
+
             // xfconf-query -c xfce4-desktop -p /backdrop/screen0/monitoreDP-1/workspace0/last-image -s /home/amirs/Pictures/Wallpaper/007.jpg
             Process proc = new Process
             {
                 StartInfo = new ProcessStartInfo
                 {
-                    FileName = "xfconf-query",
+                    FileName = cmd,
                     Arguments = arg,
                     UseShellExecute = false,
                     RedirectStandardOutput = true,
@@ -191,6 +222,23 @@ namespace wally
                 }
             };
             proc.Start();
+
+            // apply the changes immediately
+            if (IsWindows)
+            {
+                proc = new Process
+                {
+                    StartInfo = new ProcessStartInfo
+                    {
+                        FileName = "RUNDLL32.EXE",
+                        Arguments = "user32.dll,UpdatePerUserSystemParameters",
+                        UseShellExecute = false,
+                        RedirectStandardOutput = true,
+                        CreateNoWindow = true
+                    }
+                };
+                proc.Start();
+            }
         }
 
         public HtmlDocument GetDownloadPage()
