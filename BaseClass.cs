@@ -1,5 +1,5 @@
 using System.Runtime.InteropServices;
-using Newtonsoft.Json.Linq;
+// using Newtonsoft.Json.Linq;
 using System.Diagnostics;
 using HtmlAgilityPack;
 using Spectre.Console;
@@ -43,29 +43,29 @@ namespace wally
         {
             if (!IsWindows)
             {
+                // Process proc = new Process
+                // {
+                //     StartInfo = new ProcessStartInfo
+                //     {
+                //         FileName = "hostnamectl",
+                //         Arguments = "--json=pretty",
+                //         UseShellExecute = false,
+                //         RedirectStandardOutput = true,
+                //         CreateNoWindow = true
+                //     }
+                // };
+                // proc.Start();
+                // string cmd_output = proc.StandardOutput.ReadToEnd();
+                // JObject jobj = JObject.Parse(cmd_output);
+                // if (jobj["Chassis"].Value<string>() == "laptop")
+                // {
+                //     IsLaptop = true;
+                // }
+                // else
+                // {
+                //     IsLaptop = false;
+                // }
                 Process proc = new Process
-                {
-                    StartInfo = new ProcessStartInfo
-                    {
-                        FileName = "hostnamectl",
-                        Arguments = "--json=pretty",
-                        UseShellExecute = false,
-                        RedirectStandardOutput = true,
-                        CreateNoWindow = true
-                    }
-                };
-                proc.Start();
-                string cmd_output = proc.StandardOutput.ReadToEnd();
-                JObject jobj = JObject.Parse(cmd_output);
-                if (jobj["Chassis"].Value<string>() == "laptop")
-                {
-                    IsLaptop = true;
-                }
-                else
-                {
-                    IsLaptop = false;
-                }
-                proc = new Process
                 {
                     StartInfo = new ProcessStartInfo
                     {
@@ -103,18 +103,23 @@ namespace wally
             web = new HtmlWeb();
             htmlDoc = web.Load(searchURL);
             AnsiConsole.MarkupLine($"[green][[+]] Scraping Data...[/]");
-            nodes = htmlDoc.DocumentNode.SelectNodes(xpath);
-            if (nodes.Count != 0)
+            try
             {
-                AnsiConsole.MarkupLine($"[green][[+]] Storing link temporarely...[/]");
-                foreach (var item in nodes)
+                nodes = htmlDoc.DocumentNode.SelectNodes(xpath);
+                if (nodes.Count != 0)
                 {
-                    string link = $"{baseURL}{item.Attributes["href"].Value}";
-                    wallpaper_list.Add(link);
+                    AnsiConsole.MarkupLine($"[green][[+]] Storing link temporarely...[/]");
+                    foreach (var item in nodes)
+                    {
+                        string link = $"{baseURL}{item.Attributes["href"].Value}";
+                        wallpaper_list.Add(link);
+                    }
                 }
             }
-            else
-                Console.WriteLine("No Wallpapers could be found, maybe try searching for something else");
+            catch (System.Exception)
+            {
+                Console.WriteLine("No results found");
+            }
         }
 
         protected HtmlNodeCollection SingleResolution(string xpath)
@@ -184,62 +189,62 @@ namespace wally
             return destFile;
         }
 
-        public void SetWallpaper(string file_path)
-        {
-            string arg = "";
-            string cmd = "";
-            switch (DE)
-            {
-                case "xfce4":
-                    cmd = "xfconf-query";
-                    if (IsLaptop)
-                    {
-                        arg = $"-c {DE}-desktop -p /backdrop/screen0/monitoreDP-1/workspace0/last-image -s {file_path}";
-                    }
-                    else
-                    {
-                        arg = $"-c {DE}-desktop -p /backdrop/screen0/monitor0/workspace0/last-image -s {file_path}";
-                    }
-                    break;
-                case "Windows WM":
-                    cmd = "reg add";
-                    arg = $"\"HKEY_CURRENT_USER\\Control Panel\\Desktop\" /v Wallpaper /t REG_SZ /d {file_path} /f";
-                    break;
-                default:
-                    throw new Exception("No valid DE was found");
-            }
+        // public void SetWallpaper(string file_path)
+        // {
+        //     string arg = "";
+        //     string cmd = "";
+        //     switch (DE)
+        //     {
+        //         case "xfce4":
+        //             cmd = "xfconf-query";
+        //             if (IsLaptop)
+        //             {
+        //                 arg = $"-c {DE}-desktop -p /backdrop/screen0/monitoreDP-1/workspace0/last-image -s {file_path}";
+        //             }
+        //             else
+        //             {
+        //                 arg = $"-c {DE}-desktop -p /backdrop/screen0/monitor0/workspace0/last-image -s {file_path}";
+        //             }
+        //             break;
+        //         case "Windows WM":
+        //             cmd = "reg add";
+        //             arg = $"\"HKEY_CURRENT_USER\\Control Panel\\Desktop\" /v Wallpaper /t REG_SZ /d {file_path} /f";
+        //             break;
+        //         default:
+        //             throw new Exception("No valid DE was found");
+        //     }
 
-            // xfconf-query -c xfce4-desktop -p /backdrop/screen0/monitoreDP-1/workspace0/last-image -s /home/amirs/Pictures/Wallpaper/007.jpg
-            Process proc = new Process
-            {
-                StartInfo = new ProcessStartInfo
-                {
-                    FileName = cmd,
-                    Arguments = arg,
-                    UseShellExecute = false,
-                    RedirectStandardOutput = true,
-                    CreateNoWindow = true
-                }
-            };
-            proc.Start();
+        //     // xfconf-query -c xfce4-desktop -p /backdrop/screen0/monitoreDP-1/workspace0/last-image -s /home/amirs/Pictures/Wallpaper/007.jpg
+        //     Process proc = new Process
+        //     {
+        //         StartInfo = new ProcessStartInfo
+        //         {
+        //             FileName = cmd,
+        //             Arguments = arg,
+        //             UseShellExecute = false,
+        //             RedirectStandardOutput = true,
+        //             CreateNoWindow = true
+        //         }
+        //     };
+        //     proc.Start();
 
-            // apply the changes immediately
-            if (IsWindows)
-            {
-                proc = new Process
-                {
-                    StartInfo = new ProcessStartInfo
-                    {
-                        FileName = "RUNDLL32.EXE",
-                        Arguments = "user32.dll,UpdatePerUserSystemParameters",
-                        UseShellExecute = false,
-                        RedirectStandardOutput = true,
-                        CreateNoWindow = true
-                    }
-                };
-                proc.Start();
-            }
-        }
+        //     // apply the changes immediately
+        //     if (IsWindows)
+        //     {
+        //         proc = new Process
+        //         {
+        //             StartInfo = new ProcessStartInfo
+        //             {
+        //                 FileName = "RUNDLL32.EXE",
+        //                 Arguments = "user32.dll,UpdatePerUserSystemParameters",
+        //                 UseShellExecute = false,
+        //                 RedirectStandardOutput = true,
+        //                 CreateNoWindow = true
+        //             }
+        //         };
+        //         proc.Start();
+        //     }
+        // }
 
         public HtmlDocument GetDownloadPage()
         {

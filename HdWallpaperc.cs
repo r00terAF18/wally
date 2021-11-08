@@ -10,14 +10,7 @@ namespace wally
             base.searchBaseURL = "https://www.hdwallpapers.in/search.html?q=";
             base.searchURL = base.searchBaseURL + query;
             folder_name = "HdWallpapers";
-            try
-            {
-                base.GetLinks("//*[@id=\"content\"]/div[3]/ul/li/div/a");
-            }
-            catch (NullReferenceException)
-            {
-                throw new NullReferenceException();
-            }
+            GetLinks("//*[@id=\"content\"]/div[3]/ul/li/div/a");
         }
 
         public void Download(bool random = false)

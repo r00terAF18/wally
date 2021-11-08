@@ -1,86 +1,51 @@
-using HtmlAgilityPack;
 using Spectre.Console;
 
 namespace wally
 {
     public class Unsplash : BaseClass
     {
-        private const string _baseUrl = "https://unsplash.com/";
-        private const string _basUrlSearch = "https://unsplash.com/s/photos/";
-        public Unsplash(string search_term)
+        public Unsplash(string query)
         {
-            string searchUrl = _basUrlSearch + search_term;
+            base.baseURL = "https://unsplash.com/";
+            base.searchBaseURL = "https://unsplash.com/s/photos/";
+            base.searchURL = base.searchBaseURL + query;
             folder_name = "Unsplash";
-            GetLinks(searchUrl);
+            GetLinks("//[@class=\"photo-item__img\"]");
         }
 
-        private void GetLinks(string searchUrl)
-        {
-            web = new HtmlWeb();
-            htmlDoc = web.Load(searchUrl);
-            AnsiConsole.MarkupLine($"[green][[+]] Loading Content...[/]");
-            try
-            {
-                AnsiConsole.MarkupLine($"[green][[+]] Scraping Data...[/]");
-                nodes = htmlDoc.DocumentNode.SelectNodes("//*[@id=\"app\"]/div/div[2]/div[3]/div[4]/div/div/div/div[2]/figure[1]/div/div[1]/div/div/a/div/div[2]/div/img");
-                if (nodes.Count != 0)
-                {
-                    AnsiConsole.MarkupLine($"[green][[+]] Storing link temporarely...[/]");
-                    foreach (var item in nodes)
-                    {
-                        Console.WriteLine(item);
-                        string link = $"{_baseUrl}{item.Attributes["href"].Value}";
-                        wallpaper_list.Add(link);
-                    }
-                }
-                else
-                    Console.WriteLine("No Wallpapers could be found, maybe try searching for something else");
-            }
-            catch (NullReferenceException)
-            {
-                throw new NullReferenceException();
-            }
-        }
-
-        public void Download(string custom_resolution = "1920x1080", bool random = false)
+        public void Download(bool random = false)
         {
             random_download = random;
-            resolution = custom_resolution;
-            htmlDoc = GetDownloadPage();
-            nodes = htmlDoc.DocumentNode.SelectNodes("//*[@id=\"wallpaper-resolutions\"]/a");
+            nodes = SingleResolution("//*[@id=\"content\"]/div[3]/article/div[2]/a");
 
             foreach (var item in nodes)
             {
-                if (item.InnerText == resolution)
+                if (item.InnerText.Trim().Replace(" ", "") == resolution)
                 {
-                    string link = _baseUrl + item.Attributes["href"].Value;
+                    string link = baseURL + item.Attributes["href"].Value;
                     AnsiConsole.MarkupLine($"[green][[+]] Checking Folder and file name...[/]");
-                    // Class Specific Code
                     string fileName = link.Split("/")[4];
                     destFile = GetDestFile(fileName);
-                    // General Code
                     base.Download(link);
                 }
             }
         }
 
-        public void Download(List<string> custom_resolution, bool random = false)
+        public void MultiDownload(bool random = false)
         {
             random_download = random;
-            htmlDoc = GetDownloadPage();
-            nodes = htmlDoc.DocumentNode.SelectNodes("//*[@id=\"wallpaper-resolutions\"]/a");
+            nodes = MultiResolution("//*[@id=\"content\"]/div[3]/article/div[2]/a");
 
             foreach (var item in nodes)
             {
-                foreach (var res in custom_resolution)
+                foreach (var res in multi_resolution)
                 {
-                    if (item.InnerText == res)
+                    if (item.InnerText.Trim().Replace(" ", "") == res)
                     {
-                        string link = _baseUrl + item.Attributes["href"].Value;
+                        string link = baseURL + item.Attributes["href"].Value;
                         AnsiConsole.MarkupLine($"[green][[+]] Checking Folder and file name...[/]");
                         string fileName = link.Split("/")[4];
                         destFile = GetDestFile(fileName);
-                        // DownloadWallpaper(link);
                         base.Download(link);
                     }
                 }

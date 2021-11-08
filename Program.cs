@@ -16,12 +16,12 @@ AnsiConsole.WriteLine(logo);
 var website = AnsiConsole.Prompt(
     new SelectionPrompt<string>()
         .Title("Which Website to download from?")
-        .PageSize(10)
+        .PageSize(5)
         .MoreChoicesText("[grey](Move up and down to reveal more Websites)[/]")
         .AddChoices(new[] {
-            "WallpapersWide.com",
-            "HdWallpapers.in",
-            "[strikethrough]Pexels.com[/]",
+            "WallpapersWide",
+            "HdWallpapers",
+            "Pexels",
             "[strikethrough]unsplash.com[/]"
         }));
 
@@ -40,44 +40,33 @@ var random_download = AnsiConsole.Prompt(
         .AllowEmpty());
 bool drandom;
 
-var setWallpaperNow = AnsiConsole.Prompt(
-    new TextPrompt<string>("[grey][[Optional]][/] [green]Set newly downloaded Wallpaper(Y/N)[/]?")
-        .DefaultValue("N")
-        .InvalidChoiceMessage("[red]That's not a valid Choice[/]")
-        .AllowEmpty());
-bool setNow;
-
 if (random_download == "R")
     drandom = true;
 else
     drandom = false;
 
-if (setWallpaperNow == "Y")
-    setNow = true;
-else
-    setNow = false;
-
 switch (website)
 {
-    case "WallpapersWide.com":
+    case "WallpapersWide":
         WallpapersWide w = new(query);
         if (res == "S")
             w.Download(random: drandom);
         else
             w.MultiDownload();
-
-        if (setNow)
-            w.SetWallpaper(w.destFile);
         break;
-    case "HdWallpapers.in":
+    case "HdWallpapers":
         HdWallpaper h = new(query);
         if (res == "S")
             h.Download(random: drandom);
         else
             h.MultiDownload();
-
-        if (setNow)
-            h.SetWallpaper(h.destFile);
+        break;
+    case "Pexels":
+        Pexels p = new(query);
+        if (res == "S")
+            p.Download(random: drandom);
+        else
+            p.MultiDownload();
         break;
     default:
         break;

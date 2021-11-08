@@ -10,14 +10,7 @@ namespace wally
             base.searchBaseURL = "http://wallpaperswide.com/search.html?q=";
             base.searchURL = base.searchBaseURL + query;
             folder_name = "WallpapersWide";
-            try
-            {
-                GetLinks("//*[@id=\"hudtitle\"]/a");
-            }
-            catch (NullReferenceException)
-            {
-                throw new NullReferenceException();
-            }
+            GetLinks("//*[@id=\"hudtitle\"]/a");
         }
 
         /// <summary>
@@ -32,7 +25,7 @@ namespace wally
 
             foreach (var item in nodes)
             {
-                if (item.InnerText == resolution)
+                if (item.InnerText.Trim().Replace(" ", "") == resolution)
                 {
                     string link = baseURL + item.Attributes["href"].Value;
                     AnsiConsole.MarkupLine($"[green][[+]] Checking Folder and file name...[/]");
@@ -52,7 +45,7 @@ namespace wally
             {
                 foreach (var res in multi_resolution)
                 {
-                    if (item.InnerText == res)
+                    if (item.InnerText.Trim().Replace(" ", "") == res)
                     {
                         string link = baseURL + item.Attributes["href"].Value;
                         AnsiConsole.MarkupLine($"[green][[+]] Checking Folder and file name...[/]");
