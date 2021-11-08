@@ -21,12 +21,20 @@ namespace wally
             {
                 using (StreamReader sr = new(path))
                 {
-                    api_key = sr.ReadToEnd();
+                    api_key = sr.ReadToEnd().Trim();
                 }
             }
             else
             {
                 Console.WriteLine("api_key.txt not found");
+                Console.WriteLine("Please paste in your api key: ");
+                api_key = Console.ReadLine().Trim();
+                File.Create(path).Close();
+                // write api_key to file
+                using (StreamWriter sw = new(path))
+                {
+                    sw.Write(api_key);
+                }
             }
             return api_key;
         }
