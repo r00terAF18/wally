@@ -18,6 +18,7 @@ var website = AnsiConsole.Prompt(
         .Title("Which Website to download from?")
         .PageSize(5)
         .MoreChoicesText("[grey](Move up and down to reveal more Websites)[/]")
+        .MoreChoicesText("[grey]Pexels requires an API Key, get one at https://www.pexels.com/join/[/]")
         .AddChoices(new[] {
             "WallpapersWide",
             "HdWallpapers",
@@ -62,11 +63,12 @@ switch (website)
             h.MultiDownload();
         break;
     case "Pexels":
-        Pexels p = new(query);
-        if (res == "S")
-            p.Download(random: drandom);
-        else
-            p.MultiDownload();
+        Pexels p = new();
+        await p.search(query);
+        // if (res == "S")
+        //     p.Download(random: drandom);
+        // else
+        //     p.MultiDownload();
         break;
     default:
         break;

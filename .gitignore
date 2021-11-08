@@ -447,5 +447,6 @@ $RECYCLE.BIN/
 
 info.json
 sys.txt
+api_key.txt
 
 # End of https://www.toptal.com/developers/gitignore/api/dotnetcore,linux,windows,visualstudiocode,csharp

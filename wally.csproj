@@ -9,9 +9,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Flurl" Version="3.0.2" />
-    <PackageReference Include="Flurl.Http" Version="3.2.0" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.37" />
+    <PackageReference Include="PexelsDotNetSDK" Version="1.0.8" />
     <PackageReference Include="Spectre.Console" Version="0.42.0" />
   </ItemGroup>
 
