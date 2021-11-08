@@ -23,8 +23,6 @@ namespace wally
                 {
                     api_key = sr.ReadToEnd();
                 }
-                Console.WriteLine("api_key.txt found");
-                Console.WriteLine("api_key: " + api_key);
             }
             else
             {
