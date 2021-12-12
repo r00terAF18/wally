@@ -13,7 +13,7 @@ __      ____ _| | |_   _
 Console.Clear();
 AnsiConsole.WriteLine(logo);
 
-var website = AnsiConsole.Prompt(
+string website = AnsiConsole.Prompt(
     new SelectionPrompt<string>()
         .Title("Which Website to download from?")
         .PageSize(5)
@@ -28,13 +28,13 @@ var website = AnsiConsole.Prompt(
 
 string query = AnsiConsole.Ask<string>("What to search for?");
 
-var res = AnsiConsole.Prompt(
+string res = AnsiConsole.Prompt(
     new TextPrompt<string>("Download single resolution(Single Resolution/Multiple Resolutions)?")
         .InvalidChoiceMessage("[red]That's not a valid Choice[/]")
         .DefaultValue("S")
         .AddChoice("M"));
 
-var random_download = AnsiConsole.Prompt(
+string random_download = AnsiConsole.Prompt(
     new TextPrompt<string>("[grey][[Optional]][/] [green]Random or latest(R/L)[/]?")
         .DefaultValue("L")
         .InvalidChoiceMessage("[red]That's not a valid Choice[/]")
@@ -65,8 +65,8 @@ switch (website)
     case "Pexels":
         Pexels p = new();
         await p.search(query);
-        // if (res == "S")
-        //     p.Download(random: drandom);
+        if (res == "S")
+            p.Download(random: drandom);
         // else
         //     p.MultiDownload();
         break;

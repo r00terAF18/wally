@@ -1,11 +1,15 @@
 using Spectre.Console;
 using PexelsDotNetSDK.Api;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Firefox;
+using OpenQA.Selenium.Support.UI;
 
 namespace wally
 {
     public class Pexels : BaseClass
     {
         public PexelsClient pClient;
+        public string imgUrl;
         public Pexels()
         {
             pClient = new(readApiKey());
@@ -30,7 +34,6 @@ namespace wally
                 Console.WriteLine("Please paste in your api key: ");
                 api_key = Console.ReadLine().Trim();
                 File.Create(path).Close();
-                // write api_key to file
                 using (StreamWriter sw = new(path))
                 {
                     sw.Write(api_key);
@@ -39,7 +42,7 @@ namespace wally
             return api_key;
         }
 
-        public async Task<string> search(string query)
+        public async Task search(string query)
         {
             var results = await pClient.SearchPhotosAsync(query);
             List<string> urls = new();
@@ -56,12 +59,24 @@ namespace wally
                     .AddChoices(urls.ToArray()));
 
             var img = await pClient.GetPhotoAsync(int.Parse(images.Split("-").Last()));
-            return img.url;
+
+            destFile = GetDestFile(img.url.Split("/")[4]);
+
+            imgUrl = img.url;
         }
 
-        public void download()
+        public void Download(bool random = false)
         {
-
+            using (IWebDriver driver = new FirefoxDriver())
+            {
+                // gotot given url
+                driver.Navigate().GoToUrl(imgUrl);
+                var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
+                // find element with class name
+                wait.Until(driver => driver.FindElement(By.ClassName("js-download-a-tag rd__button rd__button--download")).Displayed);
+                string link = driver.FindElement(By.ClassName("js-download-a-tag rd__button rd__button--download")).GetAttribute("href");
+                base.Download(link);
+            }
         }
 
         // public void Download(bool random = false)
