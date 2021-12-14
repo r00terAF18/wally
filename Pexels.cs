@@ -18,7 +18,6 @@ namespace wally
 
         private string readApiKey()
         {
-            // reads content of api_key.txt
             string api_key = "";
             string path = "api_key.txt";
             if (File.Exists(path))
