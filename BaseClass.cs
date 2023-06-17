@@ -2,6 +2,7 @@
 using HtmlAgilityPack;
 using Spectre.Console;
 using System.Net;
+using System.Runtime.InteropServices;
 
 namespace wally
 {
@@ -28,7 +29,7 @@ namespace wally
 
         public BaseClass()
         {
-            
+            IsWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
         }
 
         public override string ToString()
