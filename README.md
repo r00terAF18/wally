@@ -6,11 +6,13 @@ Because there has to be one built using C# and .Net 6.
 
 ## No, Seriously why though 😕?
 
-Because I, like many other linux users, like to rice my OS, and having a lot of wallpapers downloaded from different sites is usefull.
+Because I, like many other linux users, like to rice my OS, and having a lot of wallpapers downloaded from different
+sites is usefull.
 
 ## For Devs:
 
-The BaseClass is the heart of it all, it handles Folder, Files and downloading the actuall images, Class specific files just adjust the URL’s and names for the BaseClass.
+The BaseClass is the heart of it all, it handles Folder, Files and downloading the actuall images, Class specific files
+just adjust the URL’s and names for the BaseClass.
 
 # TODO
 
