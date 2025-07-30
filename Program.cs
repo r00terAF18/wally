@@ -21,15 +21,8 @@ string website = AnsiConsole.Prompt(
         .PageSize(5)
         .MoreChoicesText("[grey](Move up and down to reveal more Websites)[/]")
         .MoreChoicesText("[grey]Pexels requires an API Key, get one at https://www.pexels.com/join/[/]")
-        .AddChoices(new[]
-        {
-            "Konachan (SFW)",
-            "Konachan (NSFW)",
-            "WallpapersWide",
-            "HdWallpapers",
-            "Pexels",
-            "[strikethrough]unsplash.com[/]"
-        }));
+        .AddChoices("Konachan (SFW)", "Konachan (NSFW)", "WallpapersWide", "HdWallpapers", "Pexels",
+            "[strikethrough]unsplash.com[/]"));
 
 string random_download = AnsiConsole.Prompt(
     new TextPrompt<string>("[grey][[Optional]][/] [green]Random or latest (R/L)[/]?")
@@ -94,7 +87,5 @@ switch (website)
             p.Download(drandom);
         // else
         //     p.MultiDownload();
-        break;
-    default:
         break;
 }

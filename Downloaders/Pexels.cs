@@ -20,7 +20,7 @@ public class Pexels : BaseClass
     private string ReadApiKey()
     {
         string apiKey = "";
-        string path = "api_key.txt";
+        string path   = "api_key.txt";
         if (File.Exists(path))
         {
             using (StreamReader sr = new(path))
@@ -45,8 +45,8 @@ public class Pexels : BaseClass
 
     public async Task Search(string query)
     {
-        var results = await PClient.SearchPhotosAsync(query);
-        List<string> urls = new();
+        var          results = await PClient.SearchPhotosAsync(query);
+        List<string> urls    = new();
         foreach (var image in results.photos) urls.Add(image.url.Split("/")[4]);
         // https://www.pexels.com/photo/decorative-alien-character-near-disposable-glass-and-box-5558236/
         var images = AnsiConsole.Prompt(

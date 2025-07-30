@@ -8,7 +8,6 @@ public class KonachanNsfw : BaseClass, IDownloader
 
     public KonachanNsfw(string query = "")
     {
-        
     }
 
     public void Download(bool random = false)

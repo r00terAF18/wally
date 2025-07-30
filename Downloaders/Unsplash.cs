@@ -22,7 +22,7 @@ public class Unsplash : BaseClass
             if (item.InnerText.Trim().Replace(" ", "") == Resolution)
             {
                 string link = BaseUrl + item.Attributes["href"].Value;
-                AnsiConsole.MarkupLine($"[green][[+]] Checking Folder and file name...[/]");
+                AnsiConsole.MarkupLine("[green][[+]] Checking Folder and file name...[/]");
                 string fileName = link.Split("/")[4];
                 DestFile = GetDestFile(fileName);
                 base.Download(link);
@@ -39,7 +39,7 @@ public class Unsplash : BaseClass
             if (item.InnerText.Trim().Replace(" ", "") == res)
             {
                 string link = BaseUrl + item.Attributes["href"].Value;
-                AnsiConsole.MarkupLine($"[green][[+]] Checking Folder and file name...[/]");
+                AnsiConsole.MarkupLine("[green][[+]] Checking Folder and file name...[/]");
                 string fileName = link.Split("/")[4];
                 DestFile = GetDestFile(fileName);
                 base.Download(link);
